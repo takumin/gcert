@@ -62,3 +62,9 @@ jobs:
       run: go test -v ./...
     - name: Go Building
       run: go build -v ./...
+    - name: Go Lint
+      uses: golangci/golangci-lint-action@v2
+      with:
+        skip-go-installation: true
+        skip-build-cache: true
+        skip-pkg-cache: true
