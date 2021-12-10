@@ -25,6 +25,7 @@ all: $(APPNAME)
 .PHONY: $(APPNAME)
 $(APPNAME): $(CURDIR)/bin/$(APPNAME)
 $(CURDIR)/bin/$(APPNAME): $(SRCS)
+	CGO_ENABLED=0 go generate $(LDFLAGS) ./...
 	CGO_ENABLED=0 go build $(LDFLAGS) -o $@
 
 .PHONY: install
