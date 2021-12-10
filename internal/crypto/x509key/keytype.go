@@ -4,8 +4,7 @@ package x509key
 type KeyType int
 
 const (
-	Uknown KeyType = iota
-	RSA
+	RSA KeyType = iota + 1
 	ECDSA
 	Ed25519
 )

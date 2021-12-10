@@ -8,19 +8,19 @@ func _() {
 	// An "invalid array index" compiler error signifies that the constant values have changed.
 	// Re-run the stringer command to generate them again.
 	var x [1]struct{}
-	_ = x[Uknown-0]
 	_ = x[RSA-1]
 	_ = x[ECDSA-2]
 	_ = x[Ed25519-3]
 }
 
-const _KeyType_name = "UknownRSAECDSAEd25519"
+const _KeyType_name = "RSAECDSAEd25519"
 
-var _KeyType_index = [...]uint8{0, 6, 9, 14, 21}
+var _KeyType_index = [...]uint8{0, 3, 8, 15}
 
 func (i KeyType) String() string {
+	i -= 1
 	if i < 0 || i >= KeyType(len(_KeyType_index)-1) {
-		return "KeyType(" + strconv.FormatInt(int64(i), 10) + ")"
+		return "KeyType(" + strconv.FormatInt(int64(i+1), 10) + ")"
 	}
 	return _KeyType_name[_KeyType_index[i]:_KeyType_index[i+1]]
 }
