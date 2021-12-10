@@ -44,6 +44,11 @@ $(CURDIR)/bin/$(APPNAME).zip: $(CURDIR)/bin/$(APPNAME)
 test:
 	go test -v ./...
 
+.PHONY: snapshot
+snapshot:
+	goreleaser release --rm-dist --snapshot
+
 .PHONY: clean
 clean:
 	rm -rf $(CURDIR)/bin
+	rm -rf $(CURDIR)/dist
