@@ -6,6 +6,7 @@ on:
     - 'go.mod'
     - 'go.sum'
     - '.github/workflows/ci.yml'
+    - '.goreleaser/snapshot.yml'
   workflow_dispatch:
 permissions:
   contents: read
