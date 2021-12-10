@@ -40,6 +40,10 @@ archive: $(CURDIR)/bin/$(APPNAME).zip
 $(CURDIR)/bin/$(APPNAME).zip: $(CURDIR)/bin/$(APPNAME)
 	cd $(CURDIR)/bin && zip $@ $(APPNAME)
 
+.PHONY: vet
+vet:
+	go vet ./...
+
 .PHONY: test
 test:
 	go test -v ./...

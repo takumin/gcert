@@ -58,9 +58,11 @@ jobs:
       run: go mod download
     - name: Go Mod Tidy
       run: go mod tidy
-    - name: Go Testing
+    - name: Go Vet
+      run: go vet ./...
+    - name: Go Test
       run: go test -v ./...
-    - name: Go Building
+    - name: Go Build
       run: go build -v ./...
     - name: Go Lint
       uses: golangci/golangci-lint-action@v2
