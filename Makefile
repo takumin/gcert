@@ -51,7 +51,7 @@ test:
 
 .PHONY: snapshot
 snapshot:
-	GOOS=$(shell go env GOOS) goreleaser release --config $(CURDIR)/.goreleaser/snapshot.yml --rm-dist --snapshot
+	goreleaser release --rm-dist --snapshot
 
 .PHONY: clean
 clean:
