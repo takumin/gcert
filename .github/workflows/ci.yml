@@ -44,6 +44,9 @@ jobs:
         test -z "${GOMODCACHE}" && GOMODCACHE="$(go env GOPATH)/pkg/mod"
         echo "::set-output name=go-build::${GOCACHE}"
         echo "::set-output name=go-mod::${GOMODCACHE}"
+    - name: Go Build OS
+      id: go-build-env
+      run: echo "::set-output name=goos::$(go env GOOS)"
     - name: Go Build Cache
       uses: actions/cache@v2
       with:
@@ -66,13 +69,15 @@ jobs:
       run: go vet ./...
     - name: Go Test
       run: go test -v ./...
-    - name: Release
-      uses: goreleaser/goreleaser-action@v2
-      with:
-        args: release --rm-dist --snapshot
     - name: Go Lint
       uses: golangci/golangci-lint-action@v2
       with:
         skip-go-installation: true
         skip-build-cache: true
         skip-pkg-cache: true
+    - name: Snapshot
+      uses: goreleaser/goreleaser-action@v2
+      with:
+        args: release --config .goreleaser/snapshot.yml --rm-dist --snapshot
+      env:
+        GOOS: ${{ steps.go-build-env.outputs.goos }}
