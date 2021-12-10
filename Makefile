@@ -49,6 +49,12 @@ vet:
 test:
 	go test -v ./...
 
+.PHONY: release
+release:
+ifneq ($(GITHUB_TOKEN),)
+	goreleaser release --rm-dist
+endif
+
 .PHONY: snapshot
 snapshot:
 	goreleaser release --rm-dist --snapshot
