@@ -25,6 +25,7 @@ all: $(APPNAME)
 .PHONY: $(APPNAME)
 $(APPNAME): $(CURDIR)/bin/$(APPNAME)
 $(CURDIR)/bin/$(APPNAME): $(SRCS)
+	buf generate proto
 	CGO_ENABLED=0 go generate $(LDFLAGS) ./...
 	CGO_ENABLED=0 go build $(LDFLAGS) -o $@
 
@@ -63,3 +64,4 @@ snapshot:
 clean:
 	rm -rf $(CURDIR)/bin
 	rm -rf $(CURDIR)/dist
+	find . -type f -name '*.pb.go' | xargs rm
