@@ -9,6 +9,7 @@ on:
     - '.goreleaser.yml'
     # Protocol Buffers
     - '**.proto'
+    - 'buf.yaml'
     - 'buf.gen.yaml'
     - 'buf.work.yaml'
     # GitHub Actions
