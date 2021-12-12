@@ -45,12 +45,12 @@ jobs:
     # Checkout
     ################################################################################
     - name: Checkout (Depth: 0)
-      if: startsWith(github.ref, 'refs/tags/')
+      if: ${{ startsWith(github.ref, 'refs/tags/') == true }}
       uses: actions/checkout@v2
       with:
         depth: 0
     - name: Checkout (Depth: 1)
-      if: !startsWith(github.ref, 'refs/tags/')
+      if: ${{ startsWith(github.ref, 'refs/tags/') == false }}
       uses: actions/checkout@v2
       with:
         depth: 1
@@ -111,12 +111,12 @@ jobs:
     # Release
     ################################################################################
     - name: GoReleaser (Release)
-      if: startsWith(github.ref, 'refs/tags/') && matrix.os == env.RELEASE_OS_DISTRIB && matrix.go == env.RELEASE_GO_VERSION
+      if: ${{ startsWith(github.ref, 'refs/tags/') == true && matrix.os == env.RELEASE_OS_DISTRIB && matrix.go == env.RELEASE_GO_VERSION }}
       uses: goreleaser/goreleaser-action@v2
       with:
         args: release --rm-dist
     - name: GoReleaser (Snapshot)
-      if: !startsWith(github.ref, 'refs/tags/') && matrix.os == env.RELEASE_OS_DISTRIB && matrix.go == env.RELEASE_GO_VERSION
+      if: ${{ startsWith(github.ref, 'refs/tags/') == false && matrix.os == env.RELEASE_OS_DISTRIB && matrix.go == env.RELEASE_GO_VERSION }}
       uses: goreleaser/goreleaser-action@v2
       with:
         args: release --rm-dist --snapshot
