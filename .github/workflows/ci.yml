@@ -59,6 +59,10 @@ jobs:
       uses: actions/setup-go@v2
       with:
         go-version: ${{ matrix.go }}
+    - name: Setup Protoc
+      uses: arduino/setup-protoc@v1
+    - name: Setup BufBuild
+      uses: bufbuild/buf-setup-action@v0.7.0
     ################################################################################
     # Cache
     ################################################################################

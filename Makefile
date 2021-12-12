@@ -20,9 +20,10 @@ LDFLAGS          := -ldflags '-s -w $(LDFLAGS_APPNAME) $(LDFLAGS_VERSION) $(LDFL
 SRCS := $(shell find $(CURDIR) -type f -name '*.go')
 
 .PHONY: all
-all: $(APPNAME)
+all: build
 
-.PHONY: $(APPNAME)
+.PHONY: build
+build: $(APPNAME)
 $(APPNAME): $(CURDIR)/bin/$(APPNAME)
 $(CURDIR)/bin/$(APPNAME): $(SRCS)
 	buf generate
@@ -50,21 +51,13 @@ vet:
 test:
 	go test -v ./...
 
-.PHONY: build
-build:
-	go build -v ./...
-
 .PHONY: tools
 tools:
-	go install github.com/bufbuild/buf/cmd/buf
-	go install github.com/bufbuild/buf/cmd/protoc-gen-buf-breaking
-	go install github.com/bufbuild/buf/cmd/protoc-gen-buf-lint
 	go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway
 	go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2
 	go install golang.org/x/tools/cmd/stringer
 	go install google.golang.org/grpc/cmd/protoc-gen-go-grpc
 	go install google.golang.org/protobuf/cmd/protoc-gen-go
-	go install honnef.co/go/tools/cmd/staticcheck
 
 .PHONY: lint
 lint:
@@ -74,9 +67,11 @@ lint:
 release:
 ifneq ($(GITHUB_TOKEN),)
 	goreleaser release --rm-dist
-else
-	goreleaser release --rm-dist --snapshot
 endif
+
+.PHONY: snapshot
+snapshot:
+	goreleaser release --rm-dist --snapshot
 
 .PHONY: clean
 clean:
