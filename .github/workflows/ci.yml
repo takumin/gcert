@@ -2,11 +2,19 @@ name: CI
 on:
   push:
     paths:
+    # Go
     - '**.go'
     - 'go.mod'
     - 'go.sum'
+    - '.goreleaser.yml'
+    # Protocol Buffers
+    - '**.proto'
+    - 'buf.gen.yaml'
+    - 'buf.work.yaml'
+    # GitHub Actions
     - '.github/workflows/ci.yml'
-    - '.goreleaser/snapshot.yml'
+    tags:
+    - "v[0-9]+.[0-9]+.[0-9]+"
   workflow_dispatch:
 permissions:
   contents: read
@@ -24,18 +32,38 @@ jobs:
         - '1.15'
         - '1.16'
         - '1.17'
+    env:
+      RELEASE_OS_DISTRIB: ubuntu
+      RELEASE_GO_VERSION: '1.17'
     runs-on: ${{ matrix.os }}-latest
     name: Go ${{ matrix.go }} (${{ matrix.os }})
     defaults:
       run:
         shell: bash
     steps:
-    - name: Checkout
+    ################################################################################
+    # Checkout
+    ################################################################################
+    - name: Checkout (Depth: 0)
+      if: startsWith(github.ref, 'refs/tags/')
       uses: actions/checkout@v2
-    - name: Setup Go
+      with:
+        depth: 0
+    - name: Checkout (Depth: 1)
+      if: !startsWith(github.ref, 'refs/tags/')
+      uses: actions/checkout@v2
+      with:
+        depth: 1
+    ################################################################################
+    # Setup
+    ################################################################################
+    - name: Setup Go (${{ matrix.go }})
       uses: actions/setup-go@v2
       with:
         go-version: ${{ matrix.go }}
+    ################################################################################
+    # Cache
+    ################################################################################
     - name: Go Cache Directory
       id: go-cache-paths
       run: |
@@ -55,6 +83,10 @@ jobs:
       with:
         path: ${{ steps.go-cache-paths.outputs.go-mod }}
         key: ${{ runner.os }}-go-${{ matrix.go }}-mod-${{ hashFiles('**/go.sum') }}
+    ################################################################################
+    # Go
+    ################################################################################
+    # TODO: tools.goに依存関係定義する？
     - name: Go Stringer Tool
       run: go get golang.org/x/tools/cmd/stringer
       env:
@@ -67,13 +99,24 @@ jobs:
       run: go vet ./...
     - name: Go Test
       run: go test -v ./...
+    - name: Go Build
+      run: go build -v ./...
     - name: Go Lint
       uses: golangci/golangci-lint-action@v2
       with:
         skip-go-installation: true
         skip-build-cache: true
         skip-pkg-cache: true
-    - name: Snapshot
+    ################################################################################
+    # Release
+    ################################################################################
+    - name: GoReleaser (Release)
+      if: startsWith(github.ref, 'refs/tags/') && matrix.os == env.RELEASE_OS_DISTRIB && matrix.go == env.RELEASE_GO_VERSION
       uses: goreleaser/goreleaser-action@v2
       with:
-        args: release --config .goreleaser/snapshot.yml --rm-dist --snapshot
+        args: release --rm-dist
+    - name: GoReleaser (Snapshot)
+      if: !startsWith(github.ref, 'refs/tags/') && matrix.os == env.RELEASE_OS_DISTRIB && matrix.go == env.RELEASE_GO_VERSION
+      uses: goreleaser/goreleaser-action@v2
+      with:
+        args: release --rm-dist --snapshot
