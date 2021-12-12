@@ -58,6 +58,7 @@ tools:
 	go install golang.org/x/tools/cmd/stringer
 	go install google.golang.org/grpc/cmd/protoc-gen-go-grpc
 	go install google.golang.org/protobuf/cmd/protoc-gen-go
+	go install honnef.co/go/tools/cmd/staticcheck
 
 .PHONY: lint
 lint:
