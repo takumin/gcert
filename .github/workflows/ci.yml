@@ -114,13 +114,11 @@ jobs:
     - name: Go Build
       run: make build
     ################################################################################
-    # Release
+    # GoReleaser
     ################################################################################
-    - name: GoReleaser (Snapshot)
-      if: ${{ startsWith(github.ref, 'refs/tags/') == false && matrix.os == env.RELEASE_OS_DISTRIB && matrix.go == env.RELEASE_GO_VERSION }}
-      run: make snapshot
-    - name: GoReleaser (Release)
-      if: ${{ startsWith(github.ref, 'refs/tags/') == true && matrix.os == env.RELEASE_OS_DISTRIB && matrix.go == env.RELEASE_GO_VERSION }}
-      run: make release
+    - name: GoReleaser (${{ startsWith(github.ref, 'refs/tags/') && 'Release' || 'Snapshot' }})
+      if: ${{ matrix.os == env.RELEASE_OS_DISTRIB && matrix.go == env.RELEASE_GO_VERSION }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |-
+        make ${{ startsWith(github.ref, 'refs/tags/') && 'release' || 'snapshot' }}
