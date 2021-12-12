@@ -5,6 +5,7 @@ before:
   - go mod download
   - go mod tidy
   - go generate ./...
+  - buf generate
 builds:
 - env:
   - CGO_ENABLED=0

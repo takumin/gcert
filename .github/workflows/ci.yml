@@ -84,27 +84,20 @@ jobs:
     ################################################################################
     # Go
     ################################################################################
-    # TODO: tools.goに依存関係定義する？
-    - name: Go Stringer Tool
-      run: go get golang.org/x/tools/cmd/stringer
-      env:
-        GO111MODULE: off
     - name: Go Mod Download
       run: go mod download
     - name: Go Mod Tidy
       run: go mod tidy
+    - name: Go Tools
+      run: make tools
     - name: Go Vet
-      run: go vet ./...
-    - name: Go Test
-      run: go test -v ./...
-    - name: Go Build
-      run: go build -v ./...
+      run: make vet
     - name: Go Lint
-      uses: golangci/golangci-lint-action@v2
-      with:
-        skip-go-installation: true
-        skip-build-cache: true
-        skip-pkg-cache: true
+      run: make lint
+    - name: Go Test
+      run: make test
+    - name: Go Build
+      run: make build
     ################################################################################
     # Release
     ################################################################################

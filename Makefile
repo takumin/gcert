@@ -12,10 +12,10 @@ else
 REVISION := $(shell git rev-parse --short HEAD)
 endif
 
-LDFLAGS_NAME     := -X "main.AppName=$(APPNAME)"
+LDFLAGS_APPNAME  := -X "main.AppName=$(APPNAME)"
 LDFLAGS_VERSION  := -X "main.Version=$(VERSION)"
 LDFLAGS_REVISION := -X "main.Revision=$(REVISION)"
-LDFLAGS          := -ldflags '-s -w $(LDFLAGS_NAME) $(LDFLAGS_VERSION) $(LDFLAGS_REVISION) -extldflags -static'
+LDFLAGS          := -ldflags '-s -w $(LDFLAGS_APPNAME) $(LDFLAGS_VERSION) $(LDFLAGS_REVISION) -extldflags -static'
 
 SRCS := $(shell find $(CURDIR) -type f -name '*.go')
 
@@ -50,18 +50,35 @@ vet:
 test:
 	go test -v ./...
 
+.PHONY: build
+build:
+	go build -v ./...
+
+.PHONY: tools
+tools:
+	go install github.com/bufbuild/buf/cmd/buf
+	go install github.com/bufbuild/buf/cmd/protoc-gen-buf-breaking
+	go install github.com/bufbuild/buf/cmd/protoc-gen-buf-lint
+	go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway
+	go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2
+	go install golang.org/x/tools/cmd/stringer
+	go install google.golang.org/grpc/cmd/protoc-gen-go-grpc
+	go install google.golang.org/protobuf/cmd/protoc-gen-go
+	go install honnef.co/go/tools/cmd/staticcheck
+
+.PHONY: lint
+lint:
+	staticcheck
+
 .PHONY: release
 release:
 ifneq ($(GITHUB_TOKEN),)
 	goreleaser release --rm-dist
-endif
-
-.PHONY: snapshot
-snapshot:
+else
 	goreleaser release --rm-dist --snapshot
+endif
 
 .PHONY: clean
 clean:
 	rm -rf $(CURDIR)/bin
 	rm -rf $(CURDIR)/dist
-	find . -type f -name '*.pb.go' | xargs rm
