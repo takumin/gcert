@@ -13,8 +13,6 @@ on:
     - 'buf.work.yaml'
     # GitHub Actions
     - '.github/workflows/ci.yml'
-    tags:
-    - "v[0-9]+.[0-9]+.[0-9]+"
   workflow_dispatch:
 permissions:
   contents: read
